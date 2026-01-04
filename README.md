@@ -112,10 +112,6 @@ mini-ecommerce-react/
 
 ---
 
-## 📝 License
-
-MIT License
-
 ## Submitted By
 
 Devashish Patel  
