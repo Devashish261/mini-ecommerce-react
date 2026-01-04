@@ -1,108 +1,153 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+:root {
+  --bg-body: #0a0a0a;
+  --bg-surface: #171717;
+  --bg-elevated: #262626;
+
+  --text-primary: #f5f5f5;
+  --text-secondary: #a3a3a3;
+  --text-accent: #ffffff;
+
+  --color-primary: #6366f1;
+  /* Indigo 500 */
+  --color-primary-hover: #4f46e5;
+  --color-danger: #ef4444;
+
+  --border-color: #333333;
+  --radius-sm: 6px;
+  --radius-md: 12px;
+
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+
+  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+}
+
 body {
   margin: 0;
-  font-family: "Segoe UI", system-ui, sans-serif;
-  background-color: #1e1e1e;
-  color: #fff;
+  font-family: var(--font-sans);
+  background-color: var(--bg-body);
+  color: var(--text-primary);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
 }
 
+* {
+  box-sizing: border-box;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  margin: 0 0 0.5em 0;
+  font-weight: 600;
+  color: var(--text-accent);
+}
+
+button {
+  font-family: inherit;
+}
+
+/* --- Layout Wrappers --- */
 .container {
-  padding: 24px;
-  max-width: 1200px;
-  margin: auto;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 2rem;
 }
 
-h1 {
-  margin-bottom: 16px;
+/* --- Modern Utilities (Replacing old specific classes gradually) --- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem 1rem;
+  border-radius: var(--radius-sm);
+  font-weight: 500;
+  transition: all 0.2s;
+  border: 1px solid transparent;
+  cursor: pointer;
+  font-size: 0.9rem;
 }
+
+.btn-primary {
+  background-color: var(--color-primary);
+  color: white;
+}
+
+.btn-primary:hover:not(:disabled) {
+  background-color: var(--color-primary-hover);
+}
+
+.btn-danger {
+  background-color: #2e1010;
+  color: var(--color-danger);
+  border: 1px solid #501b1b;
+}
+
+.btn-danger:hover {
+  background-color: #451515;
+}
+
+.card {
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 1.5rem;
+  transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+}
+
+.card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+  border-color: #444;
+}
+
+.input,
+.select {
+  background-color: var(--bg-elevated);
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
+  padding: 0.6rem 1rem;
+  border-radius: var(--radius-sm);
+  outline: none;
+  font-size: 0.9rem;
+  transition: border-color 0.2s;
+}
+
+.input:focus,
+.select:focus {
+  border-color: var(--color-primary);
+}
+
+/* --- Temporary Overrides for Existing Elements --- */
+/* These map the old class names to new variables so the UI improves instantly */
 
 .filters {
   display: flex;
-  gap: 10px;
+  gap: 1rem;
   flex-wrap: wrap;
-  margin-bottom: 20px;
-}
-
-.filters input,
-.filters select,
-.filters button {
-  padding: 8px 10px;
-  border-radius: 6px;
-  border: none;
-  outline: none;
+  align-items: center;
+  padding: 1rem 0;
+  margin-bottom: 2rem;
+  border-bottom: 1px solid var(--border-color);
 }
 
 .filters input,
 .filters select {
-  background: #2a2a2a;
-  color: #fff;
-}
-
-.filters button {
-  background: #444;
-  color: #fff;
-  cursor: pointer;
-}
-
-.filters button:hover {
-  background: #666;
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: var(--radius-sm);
 }
 
 .grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-  gap: 16px;
-}
-
-.card {
-  border: 1px solid #444;
-  padding: 14px;
-  border-radius: 8px;
-  background: #252525;
-  transition: transform 0.2s, box-shadow 0.2s;
-}
-
-.card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 4px 10px rgba(0,0,0,0.4);
-}
-
-.card h4 {
-  margin: 0 0 6px;
-}
-
-.card button {
-  width: 100%;
-  margin-top: 10px;
-  padding: 8px;
-  border-radius: 6px;
-  border: none;
-  background: #000;
-  color: #fff;
-  cursor: pointer;
-}
-
-.card button:disabled {
-  background: #333;
-  cursor: not-allowed;
-}
-
-.cart {
-  margin-top: 30px;
-  padding-top: 20px;
-  border-top: 1px solid #444;
-}
-
-.cart-item {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 8px;
-}
-
-.cart-item button {
-  background: crimson;
-  border: none;
-  color: #fff;
-  padding: 4px 8px;
-  border-radius: 4px;
-  cursor: pointer;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 2rem;
 }

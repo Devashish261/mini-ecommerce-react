@@ -1,9 +1,14 @@
 import { useState } from "react";
 import { products } from "./data/products.js";
+import Navbar from "./components/Navbar";
+import ProductCard from "./components/ProductCard";
+import Cart from "./components/Cart";
+import CheckoutModal from "./components/CheckoutModal";
 
 export default function App() {
   // CART STATE
   const [cart, setCart] = useState([]);
+  const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
 
   // FILTER STATES
   const [search, setSearch] = useState("");
@@ -32,14 +37,52 @@ export default function App() {
     }
   };
 
+  // DECREMENT FROM CART
+  const decrementFromCart = (product) => {
+    const existingItem = cart.find(item => item.id === product.id);
+
+    if (existingItem) {
+      if (existingItem.qty > 1) {
+        setCart(
+          cart.map(item =>
+            item.id === product.id
+              ? { ...item, qty: item.qty - 1 }
+              : item
+          )
+        );
+      } else {
+        // If qty is 1, remove it
+        removeFromCart(product.id);
+      }
+    }
+  };
+
   // REMOVE FROM CART
   const removeFromCart = (id) => {
     setCart(cart.filter(item => item.id !== id));
   };
 
+  // CHECKOUT HANDLERS
+  const handleCheckout = () => {
+    setIsCheckoutOpen(true);
+  };
+
+  const confirmOrder = () => {
+    setCart([]);
+    setIsCheckoutOpen(false);
+    alert("Order Placed Successfully!");
+  };
+
   // TOTALS
   const totalItems = cart.reduce((sum, item) => sum + item.qty, 0);
   const totalPrice = cart.reduce((sum, item) => sum + item.qty * item.price, 0);
+
+  // CLEAR FILTERS
+  const handleClear = () => {
+    setSearch("");
+    setCategory("All");
+    setSort("");
+  };
 
   // FILTER + SEARCH + SORT
   let filteredProducts = products
@@ -60,84 +103,59 @@ export default function App() {
   }
 
   return (
-    <div style={{ padding: "20px" }}>
+    <div className="container">
       <h1>Mini E-Commerce</h1>
 
-      {/* SEARCH & FILTERS */}
-      <div style={{ display: "flex", gap: "10px", marginBottom: "20px" }}>
-        <input
-          type="text"
-          placeholder="Search products..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-        />
-
-        <select value={category} onChange={(e) => setCategory(e.target.value)}>
-          {categories.map(cat => (
-            <option key={cat} value={cat}>{cat}</option>
-          ))}
-        </select>
-
-        <select value={sort} onChange={(e) => setSort(e.target.value)}>
-          <option value="">Sort by Price</option>
-          <option value="low-high">Low → High</option>
-          <option value="high-low">High → Low</option>
-        </select>
-
-        <button onClick={() => {
-          setSearch("");
-          setCategory("All");
-          setSort("");
-        }}>
-          Clear
-        </button>
-      </div>
+      {/* NAVBAR (Search & Filters) */}
+      <Navbar
+        search={search}
+        setSearch={setSearch}
+        category={category}
+        setCategory={setCategory}
+        categories={categories}
+        sort={sort}
+        setSort={setSort}
+        onClear={handleClear}
+      />
 
       {/* EMPTY STATE */}
-      {filteredProducts.length === 0 && <p>No products found</p>}
+      {filteredProducts.length === 0 && (
+        <div style={{ textAlign: 'center', padding: '4rem', color: 'var(--text-secondary)' }}>
+          <h3>No products found</h3>
+          <p>Try adjusting your search or filters.</p>
+        </div>
+      )}
 
-      {/* PRODUCTS */}
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(4, 1fr)",
-          gap: "16px"
-        }}
-      >
+      {/* PRODUCTS GRID */}
+      <div className="grid">
         {filteredProducts.map(product => (
-          <div
+          <ProductCard
             key={product.id}
-            style={{ border: "1px solid #ccc", padding: "10px" }}
-          >
-            <h4>{product.title}</h4>
-            <p>₹{product.price}</p>
-            <p>{product.category}</p>
-            <p>{product.stock > 0 ? "In Stock" : "Out of Stock"}</p>
-
-            <button
-              disabled={product.stock === 0}
-              onClick={() => addToCart(product)}
-            >
-              Add to Cart
-            </button>
-          </div>
+            product={product}
+            addToCart={addToCart}
+          />
         ))}
       </div>
 
-      {/* CART */}
-      <h2>Cart</h2>
-      {cart.length === 0 && <p>Empty cart</p>}
+      {/* CART SECTION */}
+      <Cart
+        cart={cart}
+        removeFromCart={removeFromCart}
+        addToCart={addToCart}
+        decrementFromCart={decrementFromCart}
+        totalItems={totalItems}
+        totalPrice={totalPrice}
+        onCheckout={handleCheckout}
+      />
 
-      {cart.map(item => (
-        <div key={item.id}>
-          {item.title} × {item.qty} = ₹{item.qty * item.price}
-          <button onClick={() => removeFromCart(item.id)}>Remove</button>
-        </div>
-      ))}
-
-      <hr />
-      <p>Total Items: {totalItems}</p>
-      <p>Total Price: ₹{totalPrice}</p>
+      {/* CHECKOUT MODAL */}
+      <CheckoutModal
+        isOpen={isCheckoutOpen}
+        onClose={() => setIsCheckoutOpen(false)}
+        onConfirm={confirmOrder}
+        totalItems={totalItems}
+        totalPrice={totalPrice}
+      />
     </div>
   );
 }
